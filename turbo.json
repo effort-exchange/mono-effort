@@ -1,0 +1,29 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "clean": {
+      "cache": false
+    },
+    "build": {
+      "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**", "**.go"],
+      "env": ["DOCKER_CACHE_FROM", "DOCKER_CACHE_TO"],
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**", "**.go"],
+      "dependsOn": ["^build"],
+      "env": ["GOTESTSUM_JUNITFILE"]
+    },
+    "eslint": {
+      "cache": false,
+      "outputLogs": "errors-only"
+    },
+    "cargo:publish": {
+      "cache": false,
+      "env": ["CARGO_REGISTRY_TOKEN"],
+      "dependsOn": ["^cargo:publish"]
+    }
+  }
+}
