@@ -19,4 +19,4 @@ docs/
 .env
 
 # Ignore lib, managed by package.json dependencies
-lib
+lib/
