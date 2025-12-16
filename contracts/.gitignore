@@ -2,6 +2,7 @@
 cache/
 out/
 .metamask
+node_modules
 
 # Ignores development broadcast logs
 !/broadcast
