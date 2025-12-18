@@ -88,6 +88,10 @@ contract EffortVaultFactory is EffortBase, IEffortVaultFactory {
 
         bytes memory data = abi.encodeCall(EffortVault.initialize, (asset, operator, fullName, fullSymbol));
         BeaconProxy proxy = new BeaconProxy(BEACON, data);
+
+        // Register the vault in the registry
+        REGISTRY.registerVault(address(proxy));
+
         return EffortVault(address(proxy));
     }
 
@@ -102,6 +106,10 @@ contract EffortVaultFactory is EffortBase, IEffortVaultFactory {
         // asset, operator, name, symbol will be checked by EffortVault.initialize
         bytes memory data = abi.encodeCall(EffortVault.initialize, (asset, operator, name, symbol));
         BeaconProxy proxy = new BeaconProxy(BEACON, data);
+
+        // Register the vault in the registry
+        REGISTRY.registerVault(address(proxy));
+
         return EffortVault(address(proxy));
     }
 }
