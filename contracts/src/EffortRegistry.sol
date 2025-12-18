@@ -48,6 +48,8 @@ contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeab
             revert AlreadyRegistered();
         }
 
+        _partners[sender] = true;
+
         emit PartnerRegistered(sender, uri, name);
     }
 
