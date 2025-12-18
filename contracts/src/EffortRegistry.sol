@@ -13,6 +13,7 @@ import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/ut
 
 contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeable {
     IEffortRouter immutable ROUTER;
+    IEffortVaultFactory immutable FACTORY;
 
     mapping(address Partner => bool) private _partners;
     mapping(address CharityVault => address Partner) private _charityVaults;
@@ -24,7 +25,15 @@ contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeab
         _;
     }
 
-    constructor(IEffortRouter router_) {
+    modifier onlyCharityVaultFactory(address account) {
+        if (account != address(FACTORY)) {
+            revert UnAuthorized();
+        }
+        _;
+    }
+
+    constructor(IEffortRouter router_, IEffortVaultFactory factory_) {
+        FACTORY = factory_;
         ROUTER = router_;
         _disableInitializers();
     }
@@ -53,7 +62,7 @@ contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeab
         emit PartnerRegistered(sender, uri, name);
     }
 
-    function addCharityVault(address vaultAddress) external onlyPartner(_msgSender()) {
+    function addCharityVault(address vaultAddress) external onlyCharityVaultFactory(_msgSender()) {
         if(_charityVaults[vaultAddress] != address(0)) {
             revert AlreadyRegistered();
         }

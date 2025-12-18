@@ -40,7 +40,7 @@ contract TestSuite is Test {
             address(router), address(new EffortRouter(registry, globalVault)), abi.encodeCall(EffortRouter.initialize2, ())
         );
         UnsafeUpgrades.upgradeProxy(
-            address(registry), address(new EffortRegistry(router)), abi.encodeCall(EffortRegistry.initialize2, ())
+            address(registry), address(new EffortRegistry(router, vaultFactory)), abi.encodeCall(EffortRegistry.initialize2, ())
         );
         UnsafeUpgrades.upgradeProxy(address(vaultFactory), address(new EffortVaultFactory(beacon, registry)), "");
         vm.stopPrank();
