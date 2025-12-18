@@ -6,6 +6,7 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
 
 import {EffortBase} from "./EffortBase.sol";
 import {IEffortRegistry} from "./interface/IEffortRegistry.sol";
+import {IEffortVaultFactory} from "./interface/IEffortVaultFactory.sol";
 import {IEffortRouter} from "./interface/IEffortRouter.sol";
 
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
@@ -13,8 +14,18 @@ import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/ut
 contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeable {
     IEffortRouter immutable ROUTER;
 
-    constructor(IEffortRouter router) {
-        ROUTER = router;
+    mapping(address Partner => bool) private _partners;
+    mapping(address CharityVault => address Partner) private _charityVaults;
+
+    modifier onlyPartner(address account) {
+        if (_partners[account] != true) {
+            revert UnAuthorized();
+        }
+        _;
+    }
+
+    constructor(IEffortRouter router_) {
+        ROUTER = router_;
         _disableInitializers();
     }
 
@@ -27,7 +38,27 @@ contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeab
         __ReentrancyGuard_init();
     }
 
-    function isOperator(address account) external view returns(bool){
-        return 1 == 2;
+    function isPartner(address account) external view returns(bool){
+        return _partners[account] == true;
+    }
+
+    function registerAsPartner(string calldata uri, string calldata name) external {
+        address sender = _msgSender();
+        if (_partners[sender] == true) {
+            revert AlreadyRegistered();
+        }
+
+        emit PartnerRegistered(sender, uri, name);
+    }
+
+    function addCharityVault(address vaultAddress) external onlyPartner(_msgSender()) {
+        if(_charityVaults[vaultAddress] != address(0)) {
+            revert AlreadyRegistered();
+        }
+        _charityVaults[vaultAddress] = vaultAddress;
+    }
+
+    function isCharityVault(address account) external view returns(bool) {
+        return _charityVaults[account] != address(0);
     }
 }

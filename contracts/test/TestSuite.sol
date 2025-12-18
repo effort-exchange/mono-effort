@@ -7,6 +7,7 @@ import {EffortRegistry} from "../src/EffortRegistry.sol";
 import {EffortRouter} from "../src/EffortRouter.sol";
 import {EffortVaultFactory} from "../src/EffortVaultFactory.sol";
 import {EffortVault} from "../src/EffortVault.sol";
+import {EffortGlobalVault} from "../src/EffortGlobalVault.sol";
 import {Test, console} from "forge-std/Test.sol";
 import {UnsafeUpgrades} from "@openzeppelin/foundry-upgrades/Upgrades.sol";
 
@@ -21,6 +22,7 @@ contract TestSuite is Test {
     EffortRouter public router;
     EffortRegistry public registry;
     EffortVaultFactory public vaultFactory;
+    EffortGlobalVault public globalVault;
 
     function setUp() public virtual {
         bytes memory baseInit = abi.encodeCall(EffortBase.initialize, (owner));
@@ -28,13 +30,14 @@ contract TestSuite is Test {
         router = EffortRouter(UnsafeUpgrades.deployUUPSProxy(baseImpl, baseInit));
         registry = EffortRegistry(UnsafeUpgrades.deployUUPSProxy(baseImpl, baseInit));
         vaultFactory = EffortVaultFactory(UnsafeUpgrades.deployUUPSProxy(baseImpl, baseInit));
+        globalVault = EffortGlobalVault(UnsafeUpgrades.deployUUPSProxy(baseImpl, baseInit));
 
         EffortVault vaultImpl = new EffortVault(router, registry);
         address beacon = UnsafeUpgrades.deployBeacon(address(vaultImpl), owner);
 
         vm.startPrank(owner);
         UnsafeUpgrades.upgradeProxy(
-            address(router), address(new EffortRouter(registry)), abi.encodeCall(EffortRouter.initialize2, ())
+            address(router), address(new EffortRouter(registry, globalVault)), abi.encodeCall(EffortRouter.initialize2, ())
         );
         UnsafeUpgrades.upgradeProxy(
             address(registry), address(new EffortRegistry(router)), abi.encodeCall(EffortRegistry.initialize2, ())

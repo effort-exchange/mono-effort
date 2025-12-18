@@ -29,33 +29,17 @@ interface IEffortVaultFactory {
      * This self-serve function allows operators to create new vaults without needing to go through the owner.
      * For example an operator can create a vault for a new token that is IERC20Metadata compliant.
      * Given the {ERC20.name()} is Token and {ERC20.symbol()} is TKN,
-     * the vault will be initialized with the name "Restaked {name} {ERC20.name()}" and symbol "sat.{symbol}.{ERC20.symbol()}".
+     * the vault will be initialized with the name "Restaked {name} {ERC20.name()}" and symbol "efxAV.{symbol}.{ERC20.symbol()}".
      *
      * We recommend operators to use a unique infix name and symbol to avoid confusion with other vaults.
-     * For instance, if operator is Babylon then the vault name can be "Restaked Babylon Wrapped BTC" and symbol "sat.BABY.WBTC".
      *
      * @param asset The ERC20Metadata asset to be used in the vault.
-     * @param name The infix name of the tokenized vault token. (e.g. "Restaked {name} Wrapped BTC" )
-     * @param symbol The infix symbol of the tokenized vault token. (e.g. "sat.{symbol}.WBTC" )
+     * @param name The infix name of the tokenized vault token. (e.g. "{name} Wrapped BTC" )
+     * @param symbol The infix symbol of the tokenized vault token. (e.g. "efxAV.{symbol}.WBTC" )
      * @return The newly created EffortVault instance.
      */
     function create(IERC20Metadata asset, string calldata name, string calldata symbol)
         external
         returns (EffortVault);
 
-    /**
-     * @notice For owner to create a new EffortVault instance using the Beacon proxy pattern.
-     * This function allows the owner to create a vault with a custom operator, name, and symbol.
-     * This scenario is mainly used for creating vaults that aren't IERC20Metadata compliant.
-     * For example, an owner can create a vault for a custom token that does not implement the IERC20Metadata interface.
-     *
-     * @param asset The ERC20 asset to be used in the vault.
-     * @param operator The address that will be the operator of the vault.
-     * @param name The name of the tokenized vault token.
-     * @param symbol The symbol of the tokenized vault token.
-     * @return The newly created EffortVault instance.
-     */
-    function create(IERC20 asset, address operator, string memory name, string memory symbol)
-        external
-        returns (EffortVault);
 }

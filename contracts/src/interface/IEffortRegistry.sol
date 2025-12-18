@@ -6,5 +6,17 @@ pragma solidity ^0.8.24;
  * @dev Interface for the EffortRegistry contract.
  */
 interface IEffortRegistry {
-    function isOperator(address account) external view returns (bool);
+
+    error AlreadyRegistered();
+    error UnAuthorized();
+
+    event PartnerRegistered(address indexed account, string uri, string name);
+
+    function isPartner(address account) external view returns (bool);
+
+    function registerAsPartner(string calldata uri, string calldata name) external;
+
+    function isCharityVault(address account) external view returns(bool);
+
+    function addCharityVault(address account) external; 
 }
