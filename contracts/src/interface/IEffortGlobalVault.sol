@@ -23,4 +23,9 @@ interface IEffortGlobalVault {
         uint256 epoch
     );
 
+
+    function allocateVotes(
+        address charityVault,
+        uint256 voteAmount
+    ) external;
 }

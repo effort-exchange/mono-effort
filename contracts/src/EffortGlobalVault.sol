@@ -16,6 +16,7 @@ import {EffortRouter} from "./EffortRouter.sol";
 import {EffortRegistry} from "./EffortRegistry.sol";
 import {IEffortRouter} from "./interface/IEffortRouter.sol";
 import {IEffortGlobalVault} from "./interface/IEffortGlobalVault.sol";
+import {EffortBase} from "./EffortBase.sol";
 
 contract EffortGlobalVault is
     Initializable,
@@ -23,7 +24,8 @@ contract EffortGlobalVault is
     ERC4626Upgradeable,
     ERC165Upgradeable,
     ERC20PermitUpgradeable,
-    IEffortGlobalVault
+    IEffortGlobalVault,
+    EffortBase
 {
     using SafeERC20 for IERC20;
 
@@ -51,19 +53,7 @@ contract EffortGlobalVault is
         _disableInitializers();
     }
 
-    /**
-     * @dev Initializes the EffortVault with the given parameters
-     * This function is called by the EffortVaultFactory when creating a new EffortVault instance
-     * Not to be called directly
-     *
-     * @param asset_ The address of the underlying asset (ERC20 token) that the vault will hold
-     * @param name_ The name of the vault, used for ERC20 token metadata
-     * @param symbol_ The symbol of the vault, used for ERC20 token metadata
-     */
-    function initialize(IERC20 asset_, string memory name_, string memory symbol_)
-        public
-        initializer
-    {
+    function initialize2(IERC20 asset_, string memory name_, string memory symbol_) public reinitializer(2) {
         __ERC20_init(name_, symbol_);
         __ERC4626_init(asset_);
         __ERC20Permit_init(name_);
@@ -133,30 +123,31 @@ contract EffortGlobalVault is
         address charityVault,
         uint256 voteAmount
     ) external {
+        address sender = _msgSender();
         if (address(ROUTER) == address(0)) revert RouterNotSet();
         if (voteAmount == 0) revert ZeroAmount();
-        if (balanceOf(msg.sender) < voteAmount) revert InsufficientVotes();
+        if (balanceOf(sender) < voteAmount) revert InsufficientVotes();
         if (!REGISTRY.isCharityVault(charityVault)) revert InvalidCharityVault();
 
         // Calculate USDC value of votes (uses ERC4626 standard math)
         uint256 underlyingAssetAmount = convertToAssets(voteAmount);
 
         // Burn user's vote tokens
-        _burn(msg.sender, voteAmount);
+        _burn(sender, voteAmount);
 
         // Transfer USDC to Router
         IERC20(asset()).safeTransfer(address(ROUTER), underlyingAssetAmount);
 
         // Record allocation in Router
         ROUTER.recordAllocation(
-            msg.sender,
+            sender,
             charityVault,
             voteAmount,
             underlyingAssetAmount
         );
 
         emit VotesAllocated(
-            msg.sender,
+            sender,
             charityVault,
             voteAmount,
             underlyingAssetAmount,

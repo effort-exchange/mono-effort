@@ -40,6 +40,9 @@ contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
 
     function initialize2() public reinitializer(2) {
         __ReentrancyGuard_init();
+        epochStartTime = block.timestamp;
+        currentEpoch = 1;
+        epochDuration = 30 days;
     }
 
     /*//////////////////////////////////////////////////////////////
