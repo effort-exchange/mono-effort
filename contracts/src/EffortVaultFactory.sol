@@ -43,8 +43,8 @@ contract EffortVaultFactory is EffortBase, IEffortVaultFactory {
      * Throws if called by any account that is not registered as an operator in the EffortRegistry.
      * Uses the _checkOperator function to verify the caller's operator status.
      */
-    modifier onlyOperator() {
-        _checkOperator(_msgSender());
+    modifier onlyPartner() {
+        _checkPartner(_msgSender());
         _;
     }
 
@@ -68,8 +68,8 @@ contract EffortVaultFactory is EffortBase, IEffortVaultFactory {
      *
      * @param account The address to check if it's an operator.
      */
-    function _checkOperator(address account) internal view virtual {
-        if (!REGISTRY.isOperator(account)) {
+    function _checkPartner(address account) internal view virtual {
+        if (!REGISTRY.isPartner(account)) {
             revert NotOperator(account);
         }
     }
@@ -79,29 +79,16 @@ contract EffortVaultFactory is EffortBase, IEffortVaultFactory {
         external
         override
         whenNotPaused
-        onlyOperator
+        onlyPartner
         returns (EffortVault)
     {
         address operator = _msgSender();
-        string memory fullName = string(abi.encodePacked("Effort Charity Vote", name, " ", asset.name()));
-        string memory fullSymbol = string(abi.encodePacked("efxV", symbol, ".", asset.symbol()));
+        string memory fullName = string(abi.encodePacked("Effort Charity Grant Voting Token for ", name, " ", asset.name()));
+        string memory fullSymbol = string(abi.encodePacked("efxAV", symbol, ".", asset.symbol()));
 
         bytes memory data = abi.encodeCall(EffortVault.initialize, (asset, operator, fullName, fullSymbol));
         BeaconProxy proxy = new BeaconProxy(BEACON, data);
-        return EffortVault(address(proxy));
-    }
-
-    /// @inheritdoc IEffortVaultFactory
-    function create(IERC20 asset, address operator, string memory name, string memory symbol)
-        external
-        override
-        onlyOwner
-        returns (EffortVault)
-    {
-        _checkOperator(operator);
-        // asset, operator, name, symbol will be checked by EffortVault.initialize
-        bytes memory data = abi.encodeCall(EffortVault.initialize, (asset, operator, name, symbol));
-        BeaconProxy proxy = new BeaconProxy(BEACON, data);
+        REGISTRY.addCharityVault(address(proxy));
         return EffortVault(address(proxy));
     }
 }
