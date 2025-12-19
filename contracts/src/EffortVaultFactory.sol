@@ -83,7 +83,7 @@ contract EffortVaultFactory is EffortBase, IEffortVaultFactory {
         returns (EffortVault)
     {
         address operator = _msgSender();
-        string memory fullName = string(abi.encodePacked("Effort Charity Grant Voting Token", name, " ", asset.name()));
+        string memory fullName = string(abi.encodePacked("Effort Charity Grant Voting Token for ", name, " ", asset.name()));
         string memory fullSymbol = string(abi.encodePacked("efxAV", symbol, ".", asset.symbol()));
 
         bytes memory data = abi.encodeCall(EffortVault.initialize, (asset, operator, fullName, fullSymbol));
