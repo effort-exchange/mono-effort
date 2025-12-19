@@ -41,7 +41,7 @@ interface IEffortRouter {
         address indexed user,
         address indexed charityVault,
         uint256 voteAmount,
-        uint256 usdcAmount
+        uint256 assetAmount
     );
 
     /// @notice Emitted when an epoch is finalized
@@ -50,15 +50,13 @@ interface IEffortRouter {
     /// @notice Emitted when funds are distributed to a charity vault
     event FundsDistributed(uint256 indexed epoch, address indexed charityVault, uint256 usdcAmount, uint256 totalVotes);
 
-    /// @notice Emitted when a charity vault is registered
-    event CharityVaultRegistered(address indexed charityVault);
 
     /// @notice Record a vote allocation from GlobalVault
     /// @param user The user who allocated votes
     /// @param charityVault The charity vault allocated to
     /// @param voteAmount The number of votes allocated
-    /// @param usdcAmount The USDC value of the votes
-    function recordAllocation(address user, address charityVault, uint256 voteAmount, uint256 usdcAmount) external;
+    /// @param assetAmount The underlying asset amount being allocated.
+    function recordAllocation(address user, address charityVault, uint256 voteAmount, uint256 assetAmount) external;
 
     /// @notice Finalize the current epoch and distribute funds
     function finalizeEpoch() external;

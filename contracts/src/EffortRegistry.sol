@@ -67,6 +67,8 @@ contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeab
             revert AlreadyRegistered();
         }
         _charityVaults[vaultAddress] = vaultAddress;
+
+        emit CharityVaultRegistered(vaultAddress);
     }
 
     function isCharityVault(address account) external view returns (bool) {

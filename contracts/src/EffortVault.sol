@@ -32,7 +32,7 @@ contract EffortVault is
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     EffortRegistry public immutable REGISTRY;
 
-    address internal _delegated;
+    address internal _beneficiary;
 
     /**
      * @dev Sets immutable references to the router and registry contracts
@@ -53,20 +53,20 @@ contract EffortVault is
      * Not to be called directly
      *
      * @param asset_ The address of the underlying asset (ERC20 token) that the vault will hold
-     * @param delegated_ The address of the delegated operator for this vault
+     * @param beneficiary_ The address of the beneficiary for this vault
      * @param name_ The name of the vault, used for ERC20 token metadata
      * @param symbol_ The symbol of the vault, used for ERC20 token metadata
      */
-    function initialize(IERC20 asset_, address delegated_, string memory name_, string memory symbol_)
+    function initialize(IERC20 asset_, address beneficiary_, string memory name_, string memory symbol_)
         public
         initializer
     {
-        require(delegated_ != address(0), "Delegated is not a valid account");
+        require(beneficiary_ != address(0), "Beneficiary is not a valid account");
 
         __ERC20_init(name_, symbol_);
         __ERC4626_init(asset_);
         __ERC20Permit_init(name_);
-        _delegated = delegated_;
+        _beneficiary = beneficiary_;
     }
 
     /// @inheritdoc IERC20Metadata

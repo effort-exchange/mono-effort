@@ -52,6 +52,11 @@ contract EffortGlobalVault is
         _disableInitializers();
     }
 
+    function initializeAll(address initialOwner) public {
+        EffortBase.initialize(initialOwner);
+        // initialize2();
+    }
+
     function initialize2(IERC20 asset_, string memory name_, string memory symbol_) public reinitializer(2) {
         __ERC20_init(name_, symbol_);
         __ERC4626_init(asset_);

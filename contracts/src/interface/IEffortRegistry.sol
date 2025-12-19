@@ -7,9 +7,12 @@ pragma solidity ^0.8.24;
  */
 interface IEffortRegistry {
     error AlreadyRegistered();
+
     error UnAuthorized();
 
     event PartnerRegistered(address indexed account, string uri, string name);
+
+    event CharityVaultRegistered(address indexed account);
 
     function isPartner(address account) external view returns (bool);
 
