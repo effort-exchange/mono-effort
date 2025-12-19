@@ -50,7 +50,6 @@ interface IEffortRouter {
     /// @notice Emitted when funds are distributed to a charity vault
     event FundsDistributed(uint256 indexed epoch, address indexed charityVault, uint256 usdcAmount, uint256 totalVotes);
 
-
     /// @notice Record a vote allocation from GlobalVault
     /// @param user The user who allocated votes
     /// @param charityVault The charity vault allocated to
