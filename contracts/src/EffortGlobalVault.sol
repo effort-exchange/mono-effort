@@ -39,7 +39,6 @@ contract EffortGlobalVault is
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     EffortRegistry public immutable REGISTRY;
 
-
     /**
      * @dev Sets immutable references to the ROUTER and registry contracts
      * Disables initializers to prevent re-initialization
@@ -76,16 +75,11 @@ contract EffortGlobalVault is
      * @inheritdoc ERC20Upgradeable
      */
     function _update(address from, address to, uint256 value) internal virtual override {
-        if (
-            from != address(0) &&
-            to != address(0) &&
-            to != address(ROUTER)
-        ) {
+        if (from != address(0) && to != address(0) && to != address(ROUTER)) {
             revert TransferNotAllowed();
         }
         super._update(from, to, value);
     }
-
 
     /*//////////////////////////////////////////////////////////////
                         DISABLED FUNCTIONS
@@ -94,22 +88,14 @@ contract EffortGlobalVault is
     /**
      * @notice Withdraw is disabled - users can only allocate to charities
      */
-    function withdraw(
-        uint256,
-        address,
-        address
-    ) public pure override returns (uint256) {
+    function withdraw(uint256, address, address) public pure override returns (uint256) {
         revert WithdrawDisabled();
     }
 
     /**
      * @notice Withdraw is disabled - users can only allocate to charities
      */
-    function redeem(
-        uint256,
-        address,
-        address
-    ) public pure override returns (uint256) {
+    function redeem(uint256, address, address) public pure override returns (uint256) {
         revert WithdrawDisabled();
     }
 
@@ -119,10 +105,7 @@ contract EffortGlobalVault is
      * @param charityVault The charity vault to allocate to
      * @param voteAmount The number of votes to allocate
      */
-    function allocateVotes(
-        address charityVault,
-        uint256 voteAmount
-    ) external {
+    function allocateVotes(address charityVault, uint256 voteAmount) external {
         address sender = _msgSender();
         if (address(ROUTER) == address(0)) revert RouterNotSet();
         if (voteAmount == 0) revert ZeroAmount();
@@ -139,20 +122,8 @@ contract EffortGlobalVault is
         IERC20(asset()).safeTransfer(address(ROUTER), underlyingAssetAmount);
 
         // Record allocation in Router
-        ROUTER.recordAllocation(
-            sender,
-            charityVault,
-            voteAmount,
-            underlyingAssetAmount
-        );
+        ROUTER.recordAllocation(sender, charityVault, voteAmount, underlyingAssetAmount);
 
-        emit VotesAllocated(
-            sender,
-            charityVault,
-            voteAmount,
-            underlyingAssetAmount,
-            ROUTER.getCurrentEpoch()
-        );
+        emit VotesAllocated(sender, charityVault, voteAmount, underlyingAssetAmount, ROUTER.getCurrentEpoch());
     }
-
 }

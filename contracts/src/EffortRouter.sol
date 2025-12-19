@@ -19,7 +19,6 @@ import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/ut
 contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
     using SafeERC20 for IERC20;
 
-
     /*//////////////////////////////////////////////////////////////
                                 STATE
     //////////////////////////////////////////////////////////////*/
@@ -88,7 +87,6 @@ contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
     /// @notice Track if an epoch has been finalized
     mapping(uint256 => bool) public epochFinalized;
 
-
     /**
      * @notice Update epoch duration (affects next epoch)
      * @param _epochDuration New epoch duration in seconds
@@ -109,12 +107,10 @@ contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
      * @param voteAmount The number of votes allocated
      * @param assetAmount The asset value of the votes
      */
-    function recordAllocation(
-        address user,
-        address charityVault,
-        uint256 voteAmount,
-        uint256 assetAmount
-    ) external override {
+    function recordAllocation(address user, address charityVault, uint256 voteAmount, uint256 assetAmount)
+        external
+        override
+    {
         if (_msgSender() != address(GLOBAL_VAULT)) revert OnlyGlobalVault();
         if (!REGISTRY.isCharityVault(charityVault)) revert InvalidCharityVault();
 
@@ -162,7 +158,7 @@ contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
      */
     function finalizeEpoch() external override {
         uint256 epoch = currentEpoch;
-        
+
         if (block.timestamp < epochStartTime + epochDuration) revert EpochNotEnded();
         if (epochFinalized[epoch]) revert EpochAlreadyFinalized();
 
@@ -189,7 +185,7 @@ contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
                 for (uint256 j = 0; j < userCount; j++) {
                     address user = summary.users[j];
                     uint256 userAssets = allocations[epoch][user][charityVault].assets;
-                    
+
                     if (userAssets > 0) {
                         // ERC4626 deposit: transfers assets from msg.sender (Router), mints shares to receiver (user)
                         IERC4626(charityVault).deposit(userAssets, user);
@@ -199,12 +195,7 @@ contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
                 // Reset approval
                 assetToken.approve(charityVault, 0);
 
-                emit FundsDistributed(
-                    epoch,
-                    charityVault,
-                    summary.totalAssets,
-                    summary.totalVotes
-                );
+                emit FundsDistributed(epoch, charityVault, summary.totalAssets, summary.totalVotes);
 
                 totalDistributed += summary.totalAssets;
             }
@@ -229,11 +220,12 @@ contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
      * @return votes The number of votes allocated
      * @return assets The asset value allocated
      */
-    function getAllocation(
-        uint256 epoch,
-        address user,
-        address charityVault
-    ) external view override returns (uint256 votes, uint256 assets) {
+    function getAllocation(uint256 epoch, address user, address charityVault)
+        external
+        view
+        override
+        returns (uint256 votes, uint256 assets)
+    {
         Allocation storage alloc = allocations[epoch][user][charityVault];
         return (alloc.votes, alloc.assets);
     }
@@ -253,14 +245,10 @@ contract EffortRouter is EffortBase, IEffortRouter, ReentrancyGuardUpgradeable {
      * @return True if epoch has ended and not yet finalized
      */
     function canFinalizeEpoch() external view override returns (bool) {
-        return (
-            block.timestamp >= epochStartTime + epochDuration &&
-            !epochFinalized[currentEpoch]
-        );
+        return (block.timestamp >= epochStartTime + epochDuration && !epochFinalized[currentEpoch]);
     }
 
     function getCurrentEpoch() external view returns (uint256) {
         return currentEpoch;
     }
-
 }

@@ -42,12 +42,12 @@ contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeab
         EffortBase.initialize(initialOwner);
         initialize2();
     }
-    
+
     function initialize2() public reinitializer(2) {
         __ReentrancyGuard_init();
     }
 
-    function isPartner(address account) external view returns(bool){
+    function isPartner(address account) external view returns (bool) {
         return _partners[account] == true;
     }
 
@@ -63,13 +63,13 @@ contract EffortRegistry is EffortBase, IEffortRegistry, ReentrancyGuardUpgradeab
     }
 
     function addCharityVault(address vaultAddress) external onlyCharityVaultFactory(_msgSender()) {
-        if(_charityVaults[vaultAddress] != address(0)) {
+        if (_charityVaults[vaultAddress] != address(0)) {
             revert AlreadyRegistered();
         }
         _charityVaults[vaultAddress] = vaultAddress;
     }
 
-    function isCharityVault(address account) external view returns(bool) {
+    function isCharityVault(address account) external view returns (bool) {
         return _charityVaults[account] != address(0);
     }
 }

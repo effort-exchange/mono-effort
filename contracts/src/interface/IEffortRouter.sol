@@ -6,7 +6,6 @@ pragma solidity ^0.8.24;
  * @dev Interface for the EffortRouter contract.
  */
 interface IEffortRouter {
-
     /*//////////////////////////////////////////////////////////////
                                 ERRORS
     //////////////////////////////////////////////////////////////*/
@@ -25,15 +24,15 @@ interface IEffortRouter {
 
     /// @notice Allocation data for a user to a specific charity in an epoch
     struct Allocation {
-        uint256 votes;      // Total votes allocated
-        uint256 assets;     // Total asset value (e.g., USDC)
+        uint256 votes; // Total votes allocated
+        uint256 assets; // Total asset value (e.g., USDC)
     }
 
     /// @notice Summary data for a charity in an epoch
     struct CharitySummary {
         uint256 totalVotes;
         uint256 totalAssets;
-        address[] users;    // Users who allocated to this charity
+        address[] users; // Users who allocated to this charity
     }
 
     /// @notice Emitted when an allocation is recorded
@@ -49,12 +48,7 @@ interface IEffortRouter {
     event EpochFinalized(uint256 indexed epoch, uint256 totalUSDCDistributed);
 
     /// @notice Emitted when funds are distributed to a charity vault
-    event FundsDistributed(
-        uint256 indexed epoch,
-        address indexed charityVault,
-        uint256 usdcAmount,
-        uint256 totalVotes
-    );
+    event FundsDistributed(uint256 indexed epoch, address indexed charityVault, uint256 usdcAmount, uint256 totalVotes);
 
     /// @notice Emitted when a charity vault is registered
     event CharityVaultRegistered(address indexed charityVault);
@@ -64,22 +58,16 @@ interface IEffortRouter {
     /// @param charityVault The charity vault allocated to
     /// @param voteAmount The number of votes allocated
     /// @param usdcAmount The USDC value of the votes
-    function recordAllocation(
-        address user,
-        address charityVault,
-        uint256 voteAmount,
-        uint256 usdcAmount
-    ) external;
+    function recordAllocation(address user, address charityVault, uint256 voteAmount, uint256 usdcAmount) external;
 
     /// @notice Finalize the current epoch and distribute funds
     function finalizeEpoch() external;
 
     /// @notice Get allocation for a specific user and charity in an epoch
-    function getAllocation(
-        uint256 epoch,
-        address user,
-        address charityVault
-    ) external view returns (uint256 votes, uint256 usdc);
+    function getAllocation(uint256 epoch, address user, address charityVault)
+        external
+        view
+        returns (uint256 votes, uint256 usdc);
 
     /// @notice Get the current epoch number
     function getCurrentEpoch() external view returns (uint256);

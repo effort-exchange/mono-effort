@@ -41,5 +41,4 @@ interface IEffortVaultFactory {
     function create(IERC20Metadata asset, string calldata name, string calldata symbol)
         external
         returns (EffortVault);
-
 }

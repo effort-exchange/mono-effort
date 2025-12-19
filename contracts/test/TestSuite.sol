@@ -40,7 +40,9 @@ contract TestSuite is Test {
 
         vm.startPrank(owner);
         UnsafeUpgrades.upgradeProxy(
-            address(router), address(new EffortRouter(registry, globalVault)), abi.encodeCall(EffortRouter.initialize2, ())
+            address(router),
+            address(new EffortRouter(registry, globalVault)),
+            abi.encodeCall(EffortRouter.initialize2, ())
         );
 
         UnsafeUpgrades.upgradeProxy(
@@ -50,7 +52,9 @@ contract TestSuite is Test {
         );
 
         UnsafeUpgrades.upgradeProxy(
-            address(registry), address(new EffortRegistry(router, vaultFactory)), abi.encodeCall(EffortRegistry.initialize2, ())
+            address(registry),
+            address(new EffortRegistry(router, vaultFactory)),
+            abi.encodeCall(EffortRegistry.initialize2, ())
         );
         UnsafeUpgrades.upgradeProxy(address(vaultFactory), address(new EffortVaultFactory(beacon, registry)), "");
 

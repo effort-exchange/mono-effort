@@ -6,7 +6,6 @@ pragma solidity ^0.8.24;
  * @dev Interface for the EffortRegistry contract.
  */
 interface IEffortGlobalVault {
-
     error TransferNotAllowed();
     error RouterNotSet();
     error InvalidCharityVault();
@@ -16,16 +15,8 @@ interface IEffortGlobalVault {
 
     /// @notice Emitted when a user allocates votes to a charity
     event VotesAllocated(
-        address indexed user,
-        address indexed charityVault,
-        uint256 voteAmount,
-        uint256 usdcAmount,
-        uint256 epoch
+        address indexed user, address indexed charityVault, uint256 voteAmount, uint256 usdcAmount, uint256 epoch
     );
 
-
-    function allocateVotes(
-        address charityVault,
-        uint256 voteAmount
-    ) external;
+    function allocateVotes(address charityVault, uint256 voteAmount) external;
 }

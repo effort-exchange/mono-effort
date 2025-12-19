@@ -19,7 +19,7 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
         // Register userX as a partner to create vaults
         vm.prank(partner);
         registry.registerAsPartner("https://example.com", "Example Partner");
-        
+
         vm.startPrank(partner);
         cancerResearchVault = vaultFactory.create(usdc, "Cancer Research", "CR");
         cleanWaterVault = vaultFactory.create(usdc, "Clean Water", "CW");
@@ -31,9 +31,9 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
         address userY = address(0x2222);
         address userZ = address(0x3333);
         // 1. Setup Balances
-        uint256 amountX = 20 * 10**6;
-        uint256 amountY = 30 * 10**6;
-        uint256 amountZ = 1000 * 10**6;
+        uint256 amountX = 20 * 10 ** 6;
+        uint256 amountY = 30 * 10 ** 6;
+        uint256 amountZ = 1000 * 10 ** 6;
 
         usdc.mint(userX, amountX);
         usdc.mint(userY, amountY);
@@ -71,11 +71,9 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
 
         // User Z votes 100 to Clean Water
         vm.prank(userZ);
-        globalVault.allocateVotes(address(cleanWaterVault), 100 * 10**6);
-
+        globalVault.allocateVotes(address(cleanWaterVault), 100 * 10 ** 6);
 
         // router.finalizeEpoch();
-
 
         // 4. Finalize Epoch
         // Advance time to end of epoch
@@ -83,9 +81,8 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
         // Move forward by epochDuration + 1 second to ensure we are past the end
         // Assuming current timestamp is close to epochStartTime (which is initialized in constructor/initializer?)
         // Let's check router.epochStartTime()
-        
-        _advanceBlockBySeconds(block.timestamp + epochDuration);
 
+        _advanceBlockBySeconds(block.timestamp + epochDuration);
 
         // anyone can call
         vm.prank(vm.randomAddress());
@@ -95,16 +92,15 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
         // 5. Verify Results
         // User X should get receipt token for cancer research 20
         assertEq(cancerResearchVault.balanceOf(userX), amountX, "User X should have 20 Cancer Research shares");
-        
+
         // User Y should get receipt token for cancer research 30
         assertEq(cancerResearchVault.balanceOf(userY), amountY, "User Y should have 30 Cancer Research shares");
-        
-        // User Z should get receipt token for clean water vault 100
-        assertEq(cleanWaterVault.balanceOf(userZ), 100 * 10**6, "User Z should have 100 Clean Water shares");
 
+        // User Z should get receipt token for clean water vault 100
+        assertEq(cleanWaterVault.balanceOf(userZ), 100 * 10 ** 6, "User Z should have 100 Clean Water shares");
 
         // User Z still have 900 receipt allocation receipt token from global vault
-        assertEq(globalVault.balanceOf(userZ), 900*10**6, "User Z should have 900 global vault shares");
+        assertEq(globalVault.balanceOf(userZ), 900 * 10 ** 6, "User Z should have 900 global vault shares");
     }
 
     function test_asset_distribution_by_voting_token_saturated() public {
@@ -139,7 +135,6 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
         globalVault.deposit(amountZ, userZ);
         vm.stopPrank();
 
-
         vm.startPrank(nonVotingDonor);
         usdc.transfer(address(globalVault), amountNonVotingDonor);
         vm.stopPrank();
@@ -148,7 +143,7 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
         assertEq(globalVault.balanceOf(userX), amountX, "User X should have 1000 vUSDC");
         assertEq(globalVault.balanceOf(userY), amountY, "User Y should have 1000 vUSDC");
         assertEq(globalVault.balanceOf(userZ), amountZ, "User Z should have 1000 vUSDC");
-        assertEq(globalVault.balanceOf(nonVotingDonor), 0, "Non Voting Donor receive 0 voting token"); 
+        assertEq(globalVault.balanceOf(nonVotingDonor), 0, "Non Voting Donor receive 0 voting token");
 
         // Because Non Voting Donor Sends the fund directly
         // Global Vault does not mint voting power for that user.
@@ -168,9 +163,7 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
         vm.prank(userZ);
         globalVault.allocateVotes(address(cleanWaterVault), 100 * (10 ** 6));
 
-
         // router.finalizeEpoch();
-
 
         // 4. Finalize Epoch
         // Advance time to end of epoch
@@ -178,9 +171,8 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
         // Move forward by epochDuration + 1 second to ensure we are past the end
         // Assuming current timestamp is close to epochStartTime (which is initialized in constructor/initializer?)
         // Let's check router.epochStartTime()
-        
-        _advanceBlockBySeconds(block.timestamp + epochDuration);
 
+        _advanceBlockBySeconds(block.timestamp + epochDuration);
 
         // anyone can call
         vm.prank(vm.randomAddress());
@@ -189,19 +181,23 @@ contract EffortGlobalVaultScenarioTest is TestSuite {
 
         // 5. Verify Results
         // User X should get receipt token for cancer research 1999.999999
-        // The reason the first user doesn't get exactly 1:2 ratio is because of OZ's inflation attack preventions with +1 offset. 
-        assertEq(cancerResearchVault.balanceOf(userX), 1999999999, "User X should have approx 2000 Cancer Research shares");
-        
+        // The reason the first user doesn't get exactly 1:2 ratio is because of OZ's inflation attack preventions with +1 offset.
+        assertEq(
+            cancerResearchVault.balanceOf(userX), 1999999999, "User X should have approx 2000 Cancer Research shares"
+        );
+
         // User Y should get receipt token for cancer research 2000
-        assertEq(cancerResearchVault.balanceOf(userY), 2000 * 10 ** 6, "User Y should have approx 2000 Cancer Research shares");
-        
+        assertEq(
+            cancerResearchVault.balanceOf(userY),
+            2000 * 10 ** 6,
+            "User Y should have approx 2000 Cancer Research shares"
+        );
+
         // User Z should get receipt token for clean water vault 200
         assertEq(cleanWaterVault.balanceOf(userZ), 200 * 10 ** 6, "User Z should have approx 200 Clean Water shares");
-        
-        
-        // User Z still have 900 receipt allocation receipt token from global vault
-        assertEq(globalVault.balanceOf(userZ), 900 * 10**6, "User Z should have 900 global vault shares");
 
+        // User Z still have 900 receipt allocation receipt token from global vault
+        assertEq(globalVault.balanceOf(userZ), 900 * 10 ** 6, "User Z should have 900 global vault shares");
 
         // assert that charity vault receive usdc
         assertEq(usdc.balanceOf(address(cancerResearchVault)), 2000 * 10 ** 6 + 1999999999);
